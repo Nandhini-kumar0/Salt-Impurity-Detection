@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salt Impurity Detection</title>
+
+    <style>
+        /* Body styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(
+                135deg, 
+                #FF9A9E 0%,  /* Soft pink */
+                #FAD0C4 50%, /* Peach */
+                #FBC2EB 75%, /* Pastel pink */
+                #A18CD1 100% /* Light purple */
+            ); 
+            color: #000;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            color: #000;
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        input[type="file"] {
+            margin: 15px 0;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #000;
+            background-color: #f4f4f4;
+            font-size: 1.1em;
+        }
+
+        button {
+            background-color: #FF6F91; /* Bright pink */
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #D87093; /* Darker pink */
+            transform: scale(1.05);
+        }
+
+        /* Styling for image and result output */
+        .output-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .output-image {
+            flex: 1;
+            padding-right: 20px;
+            text-align: center;
+        }
+
+        .output-image img {
+            max-width: 90%;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .output-results {
+            flex: 1;
+            padding-left: 20px;
+            background-color: #f4f4f9;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .output-results h2 {
+            color: #D87093;
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            font-size: 1.2em;
+            padding: 10px;
+            background-color: #FFC0CB;
+            color: black;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        li:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Image preview styling */
+        #imagePreviewContainer {
+            display: none;
+            margin-bottom: 20px;
+        }
+
+        #imagePreview {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Salt Impurity Detection</h1>
+        
+        <form action="/" method="POST" enctype="multipart/form-data">
+            <input type="file" name="image" accept="image/*" id="imageInput">
+            <button type="submit">Detect</button>
+        </form>
+
+        <!-- Image preview section -->
+        <div id="imagePreviewContainer">
+            <h3>Image Preview:</h3>
+            <img id="imagePreview" src="" alt="Selected Image">
+        </div>
+
+        {% if image_path and impurity_percentages %}
+            <!-- Output container for image and result -->
+            <div class="output-container">
+                <div class="output-image">
+                    
+                    <img src="{{ url_for('static', filename='uploads/' + image_path) }}" >
+                </div>
+                <div class="output-results">
+                    <h2>Detection Results:</h2>
+                    <ul>
+                        {% for impurity, percentage in impurity_percentages.items() %}
+                            <li>{{ impurity }}: {{ percentage }}%</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- JavaScript to handle image preview -->
+    <script>
+        document.getElementById('imageInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imagePreview = document.getElementById('imagePreview');
+                    imagePreview.src = e.target.result;
+                    document.getElementById('imagePreviewContainer').style.display = 'block'; // Show preview
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+
+</body>
+</html>
